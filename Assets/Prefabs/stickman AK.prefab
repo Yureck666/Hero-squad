@@ -984,7 +984,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1beea7b2d01b471282f43c64e6badd36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startLifeCount: 5
+  startLifeCount: 50
   shooter: {fileID: 2833533223916226370}
   shootDeltaRotation: {x: 0, y: -132, z: 0}
   isEnemy: 0

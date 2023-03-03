@@ -8,8 +8,10 @@ namespace HeroSquad.Characters
 	[RequireComponent(typeof(SphereCollider))]
 	public abstract class ShootingArea: MonoBehaviour
 	{
+		public List<CharacterPresenter> enemies { get; private set; }
+		
 		protected Action<bool> shootingAction;
-		private List<CharacterPresenter> _enemies;
+		
 		private SphereCollider _collider;
 
 		protected abstract void OnTriggerEnter(Collider other);
@@ -20,22 +22,17 @@ namespace HeroSquad.Characters
 			shootingAction = startShootingAction;
 			_collider = GetComponent<SphereCollider>();
 			_collider.isTrigger = true;
-			_enemies = new List<CharacterPresenter>();
-		}
-
-		public CharacterPresenter GetFirstEnemy()
-		{
-			return _enemies.FirstOrDefault();
+			enemies = new List<CharacterPresenter>();
 		}
 
 		protected void CheckAndSaveEnemy<T>(Collider other) where T: CharacterPresenter
 		{
 			if (other.TryGetComponent(out T enemy))
 			{
-				_enemies.Add(enemy);
+				enemies.Add(enemy);
 				enemy.OnDieEvent.AddListener(() => RemoveCharacterItem(enemy));
 				
-				if (_enemies.Count == 1)
+				if (enemies.Count == 1)
 				{
 					shootingAction.Invoke(true);
 				}
@@ -52,11 +49,11 @@ namespace HeroSquad.Characters
 
 		private void RemoveCharacterItem(CharacterPresenter character)
 		{
-			if (_enemies.Contains(character))
+			if (enemies.Contains(character))
 			{
-				_enemies.Remove(character);
+				enemies.Remove(character);
 				
-				if (_enemies.Count == 0)
+				if (enemies.Count == 0)
 				{
 					shootingAction.Invoke(false);
 				}

@@ -9,13 +9,13 @@ using Random = UnityEngine.Random;
 
 namespace HeroSquad.Characters.Player.Movement
 {
-	public class FollowTarget: MonoBehaviour
+	public class FollowTarget : MonoBehaviour
 	{
 		[SerializeField] private PlayerShootingArea shootingArea;
 		[SerializeField] private Transform[] points;
 
 		public bool IsInMove { get; private set; }
-		
+
 		private Dictionary<Transform, FollowerPresenter> _followers;
 
 		private void Awake()
@@ -38,11 +38,6 @@ namespace HeroSquad.Characters.Player.Movement
 			return _followers.Count;
 		}
 
-		public FollowerPresenter GetRandomFollower()
-		{
-			var followers = _followers.Values.Where(follower => follower.IsAlive);
-			return followers.Count() > 0 ? followers.ElementAt(Random.Range(0, followers.Count())) : default;
-		}
 
 		public void SetFollowersShooting(bool active)
 		{
@@ -52,21 +47,38 @@ namespace HeroSquad.Characters.Player.Movement
 			}
 		}
 
+		public CharacterPresenter GetRandomFollower()
+		{
+			return GetRandomPresenter(_followers.Values);
+		}
+
 		public CharacterPresenter GetNearestShootingTarget()
 		{
-			return shootingArea.GetFirstEnemy();
+			return GetRandomPresenter(shootingArea.enemies);
+		}
+
+		public CharacterPresenter GetRandomPresenter(List<CharacterPresenter> presenters)
+		{
+			presenters.Where(presenter => presenter.IsAlive);
+			return presenters.Any() ? presenters.ElementAt(Random.Range(0, presenters.Count())) : default;
+		}
+
+		public CharacterPresenter GetRandomPresenter(IEnumerable<CharacterPresenter> presenters)
+		{
+			presenters.Where(presenter => presenter.IsAlive);
+			return presenters.Any() ? presenters.ElementAt(Random.Range(0, presenters.Count())) : default;
 		}
 
 		public void SetInMove(bool active)
 		{
 			IsInMove = active;
 		}
-		
+
 		[CanBeNull]
 		public Transform SetFollower(FollowerPresenter follower)
 		{
 			var point = points.First(transform1 => !_followers.ContainsKey(transform1));
-			if (point != null) 
+			if (point != null)
 				_followers.Add(point, follower);
 			return point;
 		}
